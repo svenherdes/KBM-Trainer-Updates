@@ -1,7 +1,7 @@
 {
   "version": "1.3.4",
   "channel": "test",
-  "download_url": "",
-  "sha256": "",
-  "notes": "Aktuelle Testversion des KBM Trainers."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.4-test/KBM-Trainer-Setup-1.3.4-TEST.exe",
+  "sha256": "69aa80526cbf3abbd3a6dad5e8198aad42456a5a3e3bb1099027a8629123d80b",
+  "notes": "Lernempfehlungen, verbessertes Fehlertraining und weitere Verbesserungen."
 }
