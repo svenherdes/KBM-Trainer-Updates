@@ -1,7 +1,7 @@
 {
-  "version": "1.3.7.4",
+  "version": "1.3.7.5",
   "channel": "stable",
-  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.7.4/KBM-Trainer-Setup-1.3.7.4.exe",
-  "sha256": "66e95b89e5fb7a4d7b1e38ff3663b695c8da6bc06b7ed774b4b284fc3a5a3469",
-  "notes": "Neue Erklärungen zu Lösungen in Training, Fehlertraining und Fehlerhistorie. Nach Prüfungen können Antworten und Erklärungen gemeinsam angesehen werden. Enthält außerdem die bisherigen prüfungsnahen Praxisfälle und Layout-Verbesserungen."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.7.5/KBM-Trainer-Setup-1.3.7.5.exe",
+  "sha256": "dd611f4c0f2e7ffb2addb376aeb7c188a6920e04dfa1067538e929b1fea34f77",
+  "notes": "Zuverlässigere automatische Update-Installation und Neustart. Neue Erklärungen zu Lösungen in Training, Fehlertraining und Fehlerhistorie. Nach Prüfungen können Antworten und Erklärungen gemeinsam angesehen werden. Enthält außerdem die bisherigen prüfungsnahen Praxisfälle und Layout-Verbesserungen."
 }
