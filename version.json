@@ -1,7 +1,7 @@
 {
-  "version": "1.3.7.8",
+  "version": "1.4.1",
   "channel": "stable",
-  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.7.8/KBM-Trainer-Setup-1.3.7.8.exe",
-  "sha256": "a86c9b997fa6417ab1e4bbb64068839de6d86801583885dcfadcce256740fad8",
-  "notes": "Behebt die Desktop-Verknüpfung nach automatischen Updates. Alte Verknüpfungen auf KBM-Trainer.exe werden entfernt und auf die aktuelle KBM-Trainer-App.exe umgestellt. Der automatische Neustart aus Version 1.3.7.7 bleibt erhalten. Enthält weiterhin Erklärungen zu Lösungen, Fehlertraining, Prüfungsübersicht und die prüfungsnahen Praxisfälle."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.4.1/KBM-Trainer-Setup-1.4.1.exe",
+  "sha256": "ea48d0a8e2ae36a8616d7488b412f0396ea13b7a777104c841283d0c03338216",
+  "notes": "Update-System-Test 1.4.1: technisch identischer Programmstand zur stabilen Basis 1.4.0, nur mit neuer Versionsnummer. Dient zur Prüfung des vollständigen automatischen Updates von 1.4.0 auf 1.4.1 inklusive Download, SHA-256, Installation und Neustart."
 }
