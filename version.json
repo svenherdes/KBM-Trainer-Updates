@@ -1,7 +1,7 @@
 {
-  "version": "1.3.7.7",
+  "version": "1.3.7.8",
   "channel": "stable",
-  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.7.7/KBM-Trainer-Setup-1.3.7.7.exe",
-  "sha256": "b28fedd3b083de18a7e1601925306b6d4a33a18bcb23096f4c422f187265404c",
-  "notes": "Behebt den automatischen Neustart nach Updates aus älteren Versionen. Die neue Programmdatei wird mit sauberer PyInstaller-Umgebung gestartet, sodass keine veralteten _MEI-Temporärpfade übernommen werden. Neue Erklärungen zu Lösungen in Training, Fehlertraining und Fehlerhistorie. Nach Prüfungen können Antworten und Erklärungen gemeinsam angesehen werden. Enthält außerdem die bisherigen prüfungsnahen Praxisfälle und Layout-Verbesserungen."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.3.7.8/KBM-Trainer-Setup-1.3.7.8.exe",
+  "sha256": "a86c9b997fa6417ab1e4bbb64068839de6d86801583885dcfadcce256740fad8",
+  "notes": "Behebt die Desktop-Verknüpfung nach automatischen Updates. Alte Verknüpfungen auf KBM-Trainer.exe werden entfernt und auf die aktuelle KBM-Trainer-App.exe umgestellt. Der automatische Neustart aus Version 1.3.7.7 bleibt erhalten. Enthält weiterhin Erklärungen zu Lösungen, Fehlertraining, Prüfungsübersicht und die prüfungsnahen Praxisfälle."
 }
