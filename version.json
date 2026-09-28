@@ -1,7 +1,7 @@
 {
-  "version": "1.4.1",
+  "version": "1.4.2",
   "channel": "stable",
-  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.4.1/KBM-Trainer-Setup-1.4.1.exe",
-  "sha256": "ea48d0a8e2ae36a8616d7488b412f0396ea13b7a777104c841283d0c03338216",
-  "notes": "Update-System-Test 1.4.1: technisch identischer Programmstand zur stabilen Basis 1.4.0, nur mit neuer Versionsnummer. Dient zur Prüfung des vollständigen automatischen Updates von 1.4.0 auf 1.4.1 inklusive Download, SHA-256, Installation und Neustart."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.4.2/KBM-Trainer-Setup-1.4.2.exe",
+  "sha256": "15287bde9b171a2d11f458b62aeea7f87676f05f5ba70eae4f4a30cfb9bd7cff",
+  "notes": "Neuer Hauptbereich Datenschutz & IT-Sicherheit mit 600 quellengestützten Aufgaben: 200 je Stufe (Anfänger, Fortgeschritten, Experte), jeweils mit Erklärungen und 12 prüfungsnahen Praxisfällen. Gesamtpool jetzt 3.600 Aufgaben. Fachstand 21.09.2026 auf Basis von DSGVO/EUR-Lex, BDSG, BfDI und BSI. Das in 1.4.0/1.4.1 erfolgreich getestete Update-System wurde nicht verändert."
 }
