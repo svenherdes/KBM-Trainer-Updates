@@ -1,7 +1,7 @@
 {
-  "version": "1.4.2",
+  "version": "1.4.3",
   "channel": "stable",
-  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.4.2/KBM-Trainer-Setup-1.4.2.exe",
-  "sha256": "15287bde9b171a2d11f458b62aeea7f87676f05f5ba70eae4f4a30cfb9bd7cff",
-  "notes": "Neuer Hauptbereich Datenschutz & IT-Sicherheit mit 600 quellengestützten Aufgaben: 200 je Stufe (Anfänger, Fortgeschritten, Experte), jeweils mit Erklärungen und 12 prüfungsnahen Praxisfällen. Gesamtpool jetzt 3.600 Aufgaben. Fachstand 21.09.2026 auf Basis von DSGVO/EUR-Lex, BDSG, BfDI und BSI. Das in 1.4.0/1.4.1 erfolgreich getestete Update-System wurde nicht verändert."
+  "download_url": "https://github.com/svenherdes/KBM-Trainer-Updates/releases/download/v1.4.3/KBM-Trainer-Setup-1.4.3.exe",
+  "sha256": "27d31b2b56a6a1664e159498c5037c9435fe3da038431f96c8b0e6c32d250604",
+  "notes": "600 neue Aufgaben: Finanzbuchhaltung (180), kaufmännische Steuerung (180), Einkauf (120) und Logistik (120). Je drei Schwierigkeitsstufen; insgesamt 4.200 Fragen. Keine Änderungen an Benutzerprofilen oder dem bestehenden automatischen GitHub-Updateverfahren."
 }
