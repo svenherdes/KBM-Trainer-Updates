@@ -1,0 +1,28 @@
+KBM TRAINER 1.4.2 - UPDATE-REFERENZPRUEFUNG
+============================================
+
+Referenz: erfolgreich getesteter Ablauf 1.4.0 -> 1.4.1
+
+Fuer 1.4.2 wurde das Update-System bewusst NICHT umgebaut.
+
+Unveraendert:
+- fester EXE-Name: KBM-Trainer.exe
+- UPDATE_MANIFEST_URL / Abruf von version.json
+- Download- und SHA-256-Logik in app.py
+- externer Helper: KBM-Update-Helper.cmd
+- stiller Inno-Setup-Ablauf
+- automatischer Neustart ueber den Helper
+- Installationspfad / Profilpfad-Logik
+- Desktop-/Startmenue-Verknuepfungsprinzip
+
+Byte-Pruefung des Helpers gegen 1.4.1:
+SHA-256 KBM-Update-Helper.cmd:
+b2f9a8cda937df46cb5b84c84d02ae51a2c59648c2c025f1f381cc7f0eb0db59
+
+app.py wurde gegenueber 1.4.1 ausschliesslich bei APP_VERSION von 1.4.1 auf 1.4.2 geaendert.
+Die neuen Inhalte liegen in questions.py / privacy_pool.py.
+
+Installer-Aenderungen gegenueber 1.4.1:
+- Versionsnummer / Setup-Dateiname 1.4.2
+- DATENSCHUTZ_QUELLEN_2026-09.txt wird mit installiert
+Die Update-Mechanik des Installers bleibt unveraendert.

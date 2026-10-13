@@ -1,0 +1,39 @@
+KBM TRAINER 1.4.3 - ERWEITERUNG WISSENSBEREICHE
+================================================
+Stand: 13.10.2026
+
+BASIS
+- Bestehende 3.600 Fragen und vorhandene Historien bleiben erhalten.
+- Keine neue Hauptkategorie, keine Datenbankmigration, kein Eingriff in den Update-Helper.
+- Bestehende sechs Hauptbereiche, Ansichten und Updateablauf bleiben bestehen.
+
+NEUE FRAGEN (Gesamt: +600 -> 4.200)
+- Rechnungswesen/Finanzbuchhaltung: +180 (Inventur/Bilanz 36, Buchungssätze 72,
+  Vorsteuer/Umsatzsteuerbuchungen 36, Abschreibung/GuV 36).
+- Rechnungswesen/Kaufmännische Steuerung: +180 (Kostenrechnung 45,
+  BAB/Kostenstellen 45, Deckungsbeitrag 45, Budget/Kennzahlen 45).
+- Geschäftsprozesse/Einkauf: +120 (Bedarf 36, Lieferantenbewertung 36,
+  Beschaffungsstrategie 24, Einkaufscontrolling 24).
+- Geschäftsprozesse/Logistik: +120 (Lagerkennzahlen 36, ABC-/XYZ-Analyse 30,
+  Kommissionierung/Versand 30, Transport/Kosten 24).
+- Je Thema gleichmäßig auf Anfänger/Fortgeschritten/Experte verteilt.
+
+ENTDOPPLUNG
+- Rabatt, Skonto, einfache Umsatzsteuer, Angebotsvergleich, Wareneingang,
+  Reklamation und Lieferantenmanagement sind bereits in 1.4.2 enthalten.
+- Neue Inhalte konzentrieren sich daher auf bislang fehlende Kompetenzen.
+- Bestehende Fragen und IDs bleiben unverändert.
+
+TECHNIK
+- app.py: nur Versionsangabe 1.4.3 statt 1.4.2.
+- questions.py: ausschließlich Integration der neuen Fragenbank, Unterthemen-
+  Zuordnung. Keine Änderungen an den bisherigen Auswahlalgorithmen.
+- Neue Datei knowledge_143.py: 600 neue Aufgaben und Erklärungen.
+- version_info.txt, installer.iss, make_release_files.py: Release-Metadaten.
+- db.py und KBM-Update-Helper.cmd: unverändert.
+
+RELEASE-REGEL
+1. Zuerst Windows-Setup mit PyInstaller + Inno Setup bauen und testen.
+2. Danach das Setup in einen GitHub-Release v1.4.3 hochladen.
+3. Zuletzt version.json auf GitHub mit echtem SHA-256 aktualisieren.
+4. Erst danach zeigt Version 1.4.2 den gewohnten Updatehinweis.

@@ -1,0 +1,43 @@
+name: KBM-Trainer Windows-Testbuild (nicht veröffentlichen)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Quellcode auschecken
+        uses: actions/checkout@v4
+      - name: Python 3.11 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Tests und Werkzeuge
+        shell: pwsh
+        run: |
+          python test_core.py
+          python test_exam_style.py
+          python test_privacy.py
+          python test_knowledge_143.py
+          python pool_audit.py
+          python -m pip install 'pyinstaller==6.22.3'
+      - name: Inno Setup installieren
+        shell: pwsh
+        run: choco install innosetup --no-progress -y
+      - name: Windows-Programm und Installer erstellen
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' --version-file version_info.txt app.py
+          $iscc = @('${{ runner.temp }}\does-not-exist.exe', 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe', 'C:\Program Files\Inno Setup 6\ISCC.exe') | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $iscc) { throw 'Inno Setup Compiler nicht gefunden' }
+          & $iscc installer.iss
+      - name: Nur Test-Artefakt hochladen, keine Veröffentlichung
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBM-Trainer-1.4.3-Windows-UNSIGNIERT-Test
+          path: dist/installer/KBM-Trainer-Setup-1.4.3.exe
+          if-no-files-found: error

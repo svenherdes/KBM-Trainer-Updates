@@ -1,0 +1,33 @@
+KBM TRAINER 1.4.2 - DATENSCHUTZ-UPDATE
+=======================================
+
+Neu:
+- Neuer Hauptbereich: Datenschutz & IT-Sicherheit
+- 600 neue Aufgaben: 200 Anfänger, 200 Fortgeschritten, 200 Experte
+- Je Stufe 12 prüfungsnahe Praxisfälle
+- Erklärungen mit konkretem Bezug auf DSGVO/BDSG bzw. BSI-Empfehlungen
+- Gesamtpool: 3.600 Aufgaben
+
+Fachquellen / Stand:
+- Quellenstand 21.09.2026
+- EUR-Lex: DSGVO (VO (EU) 2016/679)
+- Gesetze im Internet: BDSG, insbesondere § 26 und § 38
+- BfDI: Info 1 DSGVO/BDSG und Info 6
+- BSI: Empfehlungen zu Passwörtern, 2FA, Phishing und Basisschutz
+- Details: DATENSCHUTZ_QUELLEN_2026-09.txt
+
+WICHTIG ZUM UPDATE:
+Das erfolgreiche Update-System aus 1.4.0/1.4.1 wurde NICHT umgebaut.
+Fester EXE-Name bleibt KBM-Trainer.exe.
+KBM-Update-Helper.cmd bleibt unverändert.
+Build: PyInstaller + Inno Setup wie beim erfolgreichen Referenztest.
+
+Build-Datei:
+ERSTELLE_UPDATE_1.4.2_DATENSCHUTZ.bat
+
+Ablauf wie zuletzt:
+1. Build-BAT ausführen.
+2. Installer lokal testen.
+3. GitHub-Release v1.4.2 erstellen und Setup hochladen.
+4. Lokale version.json in GitHub übernehmen.
+5. Update von 1.4.1 auf 1.4.2 testen.

@@ -1,0 +1,30 @@
+KBM TRAINER - FESTER UPDATE-STANDARD AB VERSION 1.4.0
+=====================================================
+
+Ab Version 1.4.0 wird der Update-Mechanismus nicht mehr grundsaetzlich geaendert.
+
+FESTE REGELN
+- Programmdatei bleibt dauerhaft: KBM-Trainer.exe
+- Installer bleibt: PyInstaller + Inno Setup
+- Update-Pruefung: GitHub version.json
+- Download: HTTPS mit bis zu 3 Versuchen
+- Sicherheitspruefung: SHA-256
+- Jeder Download-Versuch nutzt einen neuen eigenen Update-Ordner
+- Installation/Neustart ueber externen KBM-Update-Helper.cmd
+- Die laufende KBM-Trainer.exe ersetzt oder startet sich nicht selbst
+- Nach dem Update startet immer dieselbe Datei: KBM-Trainer.exe
+- Desktop- und Startmenue-Verknuepfungen behalten damit ein dauerhaftes Ziel
+- Profile und Lernstaende bleiben getrennt unter %LOCALAPPDATA%\KBMTrainer
+
+ABLAUF FUER SPAETERE UPDATES
+1. Neue Version lokal bauen.
+2. Setup lokal installieren und Programmstart pruefen.
+3. GitHub-Release mit versionierter Setup-EXE erstellen.
+4. Erst danach version.json mit Version, Download-Link und SHA-256 aktualisieren.
+5. Auf einem PC mit der direkten Vorversion das automatische Update testen.
+6. Erfolgreich ist ein Update erst, wenn die neue Version selbststaendig neu startet,
+   das Desktop-Symbol funktioniert und die Profildaten erhalten sind.
+
+WICHTIG
+Keine Umbenennung der Programm-EXE und keine erneute Aenderung des Update-Grundprinzips,
+solange kein zwingender technischer Grund vorliegt.

@@ -1,0 +1,39 @@
+KBM TRAINER 1.4.3 - NEUE WISSENSBEREICHE
+========================================
+
+600 neue Fragen. Gesamt: 4.200.
+- Finanzbuchhaltung: +180
+- Kaufmaennische Steuerung: +180
+- Einkauf: +120
+- Logistik: +120
+
+Bestehendes Programm in seiner Funktionsweise unveraendert:
+- db.py sowie KBM-Update-Helper.cmd sind bytegleich zu Version 1.4.2.
+- In app.py wurde NUR APP_VERSION auf 1.4.3 gesetzt.
+- questions.py fuegt nur den neuen Pool und die Unterthemen an.
+- Profilordner: %LOCALAPPDATA%\KBMTrainer (keine Datenmigration).
+
+WICHTIG: Diese ZIP enthaelt den bearbeitbaren QUELLCODE, keine fertig
+kompilierte Windows-Setup-EXE. Der automatische Updatehinweis kann erst
+nach Erstellung und Veroeffentlichung des Windows-Setups erscheinen.
+
+WINDOWS: EINMALIG ERSTELLEN UND BEI GITHUB VEROEFFENTLICHEN
+1. Alle Dateien in einen normalen Ordner entpacken (nicht aus ZIP starten).
+2. Auf Windows mit installiertem Python doppelklicken:
+   ERSTELLE_UND_VEROEFFENTLICHE_1.4.3.bat
+3. Der Build fuehrt alle Tests durch und erstellt eine Windows-Setup-EXE
+   mit PyInstaller und Inno Setup (werden ggf. installiert).
+4. Das fertige Setup vor der Freigabe LOKAL installieren und testen.
+   Im Fenster nur dann J waehlen, wenn Programm und Profile okay sind.
+5. Die GitHub CLI wird ggf. installiert; ggf. einmalig Browser-Login.
+6. Das Skript laedt die EXE als Release v1.4.3 hoch, prueft Datei-
+   groesse und SHA-256 und aktualisiert ERST DANACH version.json.
+7. Beim Start des alten KBM Trainer 1.4.2 erscheint der bekannte
+   Updatehinweis, wenn seine automatische Updatepruefung aktiviert ist.
+
+Fehlerfall: Bleibt das Setup aus oder ist die Freigabe/Pruefung negativ,
+bleibt der aktive GitHub-Updatehinweis auf 1.4.2. Kein fehlerhafter Link.
+
+TECHNISCHE NOTIZEN: AENDERUNGEN_1.4.3.txt
+FACHQUELLEN: FACHQUELLEN_1.4.3.txt
+ORIGINALHINWEISE: HISTORIE_1.4.2.txt

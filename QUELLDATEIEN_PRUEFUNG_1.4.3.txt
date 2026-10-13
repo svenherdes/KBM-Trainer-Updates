@@ -1,0 +1,7 @@
+KBM 1.4.3 - Dateienvergleich gegen Original 1.4.2
+VERAENDERT: questions.py, version_info.txt, BITTE_ZUERST_LESEN.txt, installer.iss, app.py, make_release_files.py, pool_audit.py
+UNVERAENDERT (inkl. db.py & Update-Helper): KBM-Update-Helper.cmd, DATENSCHUTZ_QUELLEN_2026-09.txt, UPDATE_REFERENZ_PRUEFUNG_1.4.2.txt, exam_style_pool.py, test_privacy.py, privacy_pool.py, quality_pool_3000.py, test_exam_style.py, UPDATE_SYSTEM_1.4.0.txt, distractor_quality.py, expanded_pool.py, db.py, test_core.py, assets/kbm_trainer.ico, assets/kbm_trainer_icon.png
+ALTFRAGEN: 3.600 byteunabhaengig als Frageobjekte verglichen, SHA-256 der Inhalte identisch.
+NEUE FRAGEN: 600. GESAMT 4.200.
+Tests: test_core.py, test_privacy.py, test_exam_style.py, test_knowledge_143.py, pool_audit.py bestanden.
+OFFEN: Native Windows-Installerpruefung; GitHub-Release v1.4.3 noch nicht veroeffentlicht.
