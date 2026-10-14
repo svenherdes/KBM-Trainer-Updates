@@ -36,16 +36,40 @@ jobs:
           python pool_audit.py
           if ($LASTEXITCODE -ne 0) { throw 'pool_audit fehlgeschlagen' }
 
+      - name: Store-Update-Abschirmung testen
+        shell: pwsh
+        run: |
+          @'
+          import ast
+          import pathlib
+          source = pathlib.Path('store_entry.py').read_text(encoding='utf-8')
+          tree = ast.parse(source)
+          classes = [n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'KBMStoreApp']
+          assert len(classes) == 1
+          methods = {n.name: n for n in classes[0].body if isinstance(n, ast.FunctionDef)}
+          for name in ('_load_settings', 'check_for_updates', 'download_and_install_update', 'show_updates_window', 'show_updates'):
+              assert name in methods, f'Fehlende Store-Sperre: {name}'
+          for name in ('check_for_updates', 'download_and_install_update', 'show_updates_window', 'show_updates'):
+              body = ast.get_source_segment(source, methods[name])
+              assert 'super().' not in body, f'Original-Updater aufgerufen: {name}'
+              for forbidden in ('urlopen(', 'Popen(', 'os.startfile(', 'download_url'):
+                  assert forbidden not in body, f'Unzulaessiger Updateaufruf in {name}: {forbidden}'
+          settings_body = ast.get_source_segment(source, methods['_load_settings'])
+          assert '"check_updates_on_start": False' in settings_body
+          print('STORE-UPDATE-SPERRE OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Store-Update-Sperre fehlgeschlagen' }
+
       - name: PyInstaller und Bildwerkzeug installieren
         shell: pwsh
         run: |
           python -m pip install --disable-pip-version-check 'pyinstaller==6.22.3' 'pillow==11.3.0'
           if ($LASTEXITCODE -ne 0) { throw 'Paketwerkzeuge konnten nicht installiert werden' }
 
-      - name: Unveraenderten KBM-Trainer als EXE bauen
+      - name: Separaten KBM-Trainer mit Store-Updater als EXE bauen
         shell: pwsh
         run: |
-          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' --version-file version_info.txt app.py
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' --version-file version_info.txt store_entry.py
           if ($LASTEXITCODE -ne 0) { throw 'PyInstaller-Build fehlgeschlagen' }
           if (-not (Test-Path 'dist\KBM-Trainer.exe')) { throw 'KBM-Trainer.exe fehlt' }
 
@@ -59,7 +83,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path 'msix-output' | Out-Null
           Copy-Item 'dist\KBM-Trainer.exe' (Join-Path $stage 'KBM-Trainer.exe')
 
-          # Nur Bild-Assets und die unveraenderte EXE: kein Inno-Setup und kein Update-Helper.
+          # Nur Bild-Assets und die gesonderte Store-EXE: kein Inno-Setup und kein Update-Helper.
           @'
           from PIL import Image
           from pathlib import Path
@@ -122,7 +146,7 @@ jobs:
           "MSIX-Testbuild erfolgreich: $output" | Add-Content -Path $env:GITHUB_STEP_SUMMARY
           "SHA-256: $hash" | Add-Content -Path $env:GITHUB_STEP_SUMMARY
           'ACHTUNG: Nicht signiert, nicht Store-zertifiziert, NICHT fuer Endbenutzer installieren.' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
-          'Vor einer Store-Freigabe muss die bestehende GitHub-Updatefunktion der separaten Store-Variante geprueft werden.' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          'Die Store-Ausgabe besitzt einen separaten Einstiegspunkt mit deaktiviertem GitHub-Updater. Vor Store-Freigabe ist ein realer Funktionstest erforderlich.' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
 
       - name: MSIX nur als Test-Artefakt speichern (kein Release)
         uses: actions/upload-artifact@v4
