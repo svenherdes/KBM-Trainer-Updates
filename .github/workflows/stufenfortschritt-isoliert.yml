@@ -1,0 +1,53 @@
+name: KBM-Trainer Stufenfortschritt Isolierter Test
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: windows-2022
+    steps:
+      - name: Quellcode holen
+        uses: actions/checkout@v4
+      - name: Python einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Automatische Tests
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m py_compile app.py db.py store_entry.py test_stufenfortschritt_entry.py
+          if ($LASTEXITCODE -ne 0) { throw 'Syntax-Test fehlgeschlagen' }
+          python test_core.py
+          if ($LASTEXITCODE -ne 0) { throw 'Profiltest fehlgeschlagen' }
+          python test_exam_style.py
+          if ($LASTEXITCODE -ne 0) { throw 'Pruefungstest fehlgeschlagen' }
+          python test_privacy.py
+          if ($LASTEXITCODE -ne 0) { throw 'Datenschutztest fehlgeschlagen' }
+          python test_knowledge_143.py
+          if ($LASTEXITCODE -ne 0) { throw 'Fragentest fehlgeschlagen' }
+          python pool_audit.py
+          if ($LASTEXITCODE -ne 0) { throw 'Fragenpoolpruefung fehlgeschlagen' }
+      - name: PyInstaller installieren
+        shell: pwsh
+        run: python -m pip install --disable-pip-version-check 'pyinstaller==6.22.3'
+      - name: Separate portable EXE bauen
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer-Stufenfortschritt-TEST --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' test_stufenfortschritt_entry.py
+          if ($LASTEXITCODE -ne 0) { throw 'EXE-Build fehlgeschlagen' }
+          if (-not (Test-Path 'dist\KBM-Trainer-Stufenfortschritt-TEST.exe')) { throw 'EXE fehlt' }
+      - name: Testpaket speichern - kein Installer, kein Release
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBM-Trainer-Stufenfortschritt-TEST-NUR-ENTWICKLUNG
+          path: dist/KBM-Trainer-Stufenfortschritt-TEST.exe
+          if-no-files-found: error
+          retention-days: 7
