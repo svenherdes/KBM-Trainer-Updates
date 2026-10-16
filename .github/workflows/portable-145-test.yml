@@ -1,0 +1,46 @@
+name: KBM-Trainer 1.4.5 portable Vorschau (isoliert)
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  portable:
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Tests und Python-Syntax
+        shell: pwsh
+        run: |
+          python -m py_compile test_store_145_portable_entry.py store_update_145_entry.py store_features_145.py
+          if ($LASTEXITCODE -ne 0) { throw 'Syntax fehlgeschlagen' }
+          python test_store_145.py
+          if ($LASTEXITCODE -ne 0) { throw 'Store-145-Test fehlgeschlagen' }
+          python test_core.py
+          if ($LASTEXITCODE -ne 0) { throw 'Core-Test fehlgeschlagen' }
+      - name: PyInstaller installieren
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check 'pyinstaller==6.22.3'
+          if ($LASTEXITCODE -ne 0) { throw 'PyInstaller nicht installiert' }
+      - name: Portable EXE ohne Installer bauen
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer-145-NUR-TEST --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' test_store_145_portable_entry.py
+          if ($LASTEXITCODE -ne 0) { throw 'Build fehlgeschlagen' }
+          if (-not (Test-Path 'dist\KBM-Trainer-145-NUR-TEST.exe')) { throw 'EXE fehlt' }
+      - name: Vorschau als ZIP-Artefakt speichern
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBM-Trainer-145-PORTABEL-NUR-TEST
+          path: dist/KBM-Trainer-145-NUR-TEST.exe
+          if-no-files-found: error
+          retention-days: 7
