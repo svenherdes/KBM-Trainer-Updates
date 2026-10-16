@@ -65,7 +65,7 @@ if (Test-Path -LiteralPath $path) { exit 0 }
 $ws = New-Object -ComObject WScript.Shell
 $link = $ws.CreateShortcut($path)
 $link.TargetPath = Join-Path $env:WINDIR 'explorer.exe'
-$link.Arguments = "shell:AppsFolder\\$($pkg.PackageFamilyName)!KBMTrainer"
+$link.Arguments = "shell:AppsFolder\$($pkg.PackageFamilyName)!KBMTrainer"
 $link.Description = 'KBM-Trainer aus dem Microsoft Store'
 $link.Save()
 '''
