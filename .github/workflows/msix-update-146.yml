@@ -73,7 +73,7 @@ jobs:
       - name: Nativen Microsoft-Store-Updatehelfer bauen
         shell: pwsh
         run: |
-          dotnet publish store-helper-146/KBM-Store-Update.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o store-helper-out
+          dotnet publish store-helper-145/KBM-Store-Update.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o store-helper-out
           if ($LASTEXITCODE -ne 0) { throw 'Store-Helfer-Build fehlgeschlagen' }
           if (-not (Test-Path 'store-helper-out/KBM-Store-Update.exe')) { throw 'Store-Helfer fehlt' }
 
