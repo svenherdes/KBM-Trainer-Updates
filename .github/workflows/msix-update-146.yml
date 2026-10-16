@@ -27,8 +27,8 @@ jobs:
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
-          python test_store_146.py
-          if ($LASTEXITCODE -ne 0) { throw 'test_store_146 fehlgeschlagen' }
+          python test_store_145.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_store_145 fehlgeschlagen' }
           python test_core.py
           if ($LASTEXITCODE -ne 0) { throw 'test_core fehlgeschlagen' }
           python test_exam_style.py
