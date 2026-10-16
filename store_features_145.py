@@ -81,7 +81,7 @@ $link.Save()
 
 
 def helper_path() -> Path:
-    base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
+    base = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
     return base / "KBM-Store-Update.exe"
 
 
