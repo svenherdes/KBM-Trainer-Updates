@@ -72,6 +72,36 @@ def run():
     assert qualification["requirements"]["exam"] == 90.0
     assert qualification["requirements"]["errors"] == 3
 
+
+    # Regression: jedes Profil hat seinen eigenen Stufenfortschritt.
+    # Ein neues Profil darf keine Werte oder Empfehlungen anderer Profile erben.
+    fresh_pid = db.create_profile("Neues Profil")
+    assert db.summary(fresh_pid, "Gesamt")["total"] == 0
+    for level in ("Anfänger", "Fortgeschritten"):
+        progress = db.stage_progress(fresh_pid, level)
+        assert progress["total"] == 0
+        assert progress["rate"] == 0.0
+        assert progress["latest_exam_rate"] is None
+        assert progress["active_errors"] == 0
+    assert db.stage_recommendation(fresh_pid) is None
+
+    # Erst eigene Antworten aktivieren den persönlichen Stufenfortschritt.
+    db.save_attempt(
+        fresh_pid, "training", "Büroorganisation", "Prioritäten", "Anfänger",
+        "isolated1", "Test?", "ja", "ja", "ok", True, 1, 0, 10,
+        question_kind="choice",
+    )
+    assert db.summary(fresh_pid, "Gesamt")["total"] == 1
+    assert db.stage_progress(fresh_pid, "Anfänger")["total"] == 1
+    assert db.stage_progress(fresh_pid, "Fortgeschritten")["total"] == 0
+    assert db.stage_progress(rec_pid, "Anfänger")["total"] == 5
+
+    # Das nächste frische Profil startet wieder vollständig bei null.
+    next_pid = db.create_profile("Noch ein neues Profil")
+    assert db.summary(next_pid, "Gesamt")["total"] == 0
+    assert db.stage_progress(next_pid, "Anfänger")["total"] == 0
+    assert db.stage_progress(next_pid, "Fortgeschritten")["total"] == 0
+
     print("CORE TEST OK")
 
 

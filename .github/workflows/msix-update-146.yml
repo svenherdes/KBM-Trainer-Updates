@@ -1,0 +1,179 @@
+name: KBM-Trainer 1.4.6 MSIX-Update (nur Pruefpaket)
+
+# Nur manuell starten. Kein Release, keine Store-Uebermittlung, keine Signatur.
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  msix-testbuild:
+    name: Windows-MSIX auf separatem GitHub-Runner erstellen
+    runs-on: windows-2022
+    timeout-minutes: 30
+    steps:
+      - name: Quellcode auschecken
+        uses: actions/checkout@v4
+
+      - name: Python 3.11 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Bestehende Tests ausfuehren
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          python test_store_145.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_store_145 fehlgeschlagen' }
+          python test_core.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_core fehlgeschlagen' }
+          python test_exam_style.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_exam_style fehlgeschlagen' }
+          python test_privacy.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_privacy fehlgeschlagen' }
+          python test_knowledge_143.py
+          if ($LASTEXITCODE -ne 0) { throw 'test_knowledge_143 fehlgeschlagen' }
+          python pool_audit.py
+          if ($LASTEXITCODE -ne 0) { throw 'pool_audit fehlgeschlagen' }
+
+      - name: Store-Update-Abschirmung testen
+        shell: pwsh
+        run: |
+          @'
+          import ast
+          import pathlib
+          source = pathlib.Path('store_entry.py').read_text(encoding='utf-8')
+          tree = ast.parse(source)
+          classes = [n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == 'KBMStoreApp']
+          assert len(classes) == 1
+          methods = {n.name: n for n in classes[0].body if isinstance(n, ast.FunctionDef)}
+          for name in ('_load_settings', 'check_for_updates', 'download_and_install_update', 'show_updates_window', 'show_updates'):
+              assert name in methods, f'Fehlende Store-Sperre: {name}'
+          for name in ('check_for_updates', 'download_and_install_update', 'show_updates_window', 'show_updates'):
+              body = ast.get_source_segment(source, methods[name])
+              assert 'super().' not in body, f'Original-Updater aufgerufen: {name}'
+              for forbidden in ('urlopen(', 'Popen(', 'os.startfile(', 'download_url'):
+                  assert forbidden not in body, f'Unzulaessiger Updateaufruf in {name}: {forbidden}'
+          settings_body = ast.get_source_segment(source, methods['_load_settings'])
+          assert '"check_updates_on_start": False' in settings_body
+          print('STORE-UPDATE-SPERRE OK')
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Store-Update-Sperre fehlgeschlagen' }
+
+      - name: PyInstaller und Bildwerkzeug installieren
+        shell: pwsh
+        run: |
+          python -m pip install --disable-pip-version-check 'pyinstaller==6.22.3' 'pillow==11.3.0'
+          if ($LASTEXITCODE -ne 0) { throw 'Paketwerkzeuge konnten nicht installiert werden' }
+
+      - name: Nativen Microsoft-Store-Updatehelfer bauen
+        shell: pwsh
+        run: |
+          dotnet publish store-helper-145/KBM-Store-Update.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o store-helper-out
+          if ($LASTEXITCODE -ne 0) { throw 'Store-Helfer-Build fehlgeschlagen' }
+          if (-not (Test-Path 'store-helper-out/KBM-Store-Update.exe')) { throw 'Store-Helfer fehlt' }
+
+      - name: Separaten KBM-Trainer mit Store-Updater als EXE bauen
+        shell: pwsh
+        run: |
+          python -m PyInstaller --noconfirm --clean --onefile --windowed --name KBM-Trainer --icon 'assets\kbm_trainer.ico' --add-data 'assets;assets' --version-file store_version_info_146.txt store_update_146_entry.py
+          if ($LASTEXITCODE -ne 0) { throw 'PyInstaller-Build fehlgeschlagen' }
+          if (-not (Test-Path 'dist\KBM-Trainer.exe')) { throw 'KBM-Trainer.exe fehlt' }
+
+      - name: MSIX-Testpaket erstellen (NICHT signiert)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $stage = Join-Path $env:RUNNER_TEMP 'kbm-msix-stage'
+          $images = Join-Path $stage 'Images'
+          New-Item -ItemType Directory -Force -Path $images | Out-Null
+          New-Item -ItemType Directory -Force -Path 'msix-output' | Out-Null
+          Copy-Item 'dist\KBM-Trainer.exe' (Join-Path $stage 'KBM-Trainer.exe')
+          Copy-Item 'store-helper-out\KBM-Store-Update.exe' (Join-Path $stage 'KBM-Store-Update.exe')
+
+          # Nur Bild-Assets und die gesonderte Store-EXE: kein Inno-Setup und kein Update-Helper.
+          @'
+          from PIL import Image
+          from pathlib import Path
+          import os
+          base = Path(os.environ['RUNNER_TEMP']) / 'kbm-msix-stage' / 'Images'
+          source = Image.open('assets/kbm_trainer_icon.png').convert('RGBA')
+          for filename, size in [('StoreLogo.png', 50), ('Square44x44Logo.png', 44), ('Square150x150Logo.png', 150)]:
+              source.resize((size, size), Image.Resampling.LANCZOS).save(base / filename)
+          '@ | python -
+          if ($LASTEXITCODE -ne 0) { throw 'Logo-Erzeugung fehlgeschlagen' }
+
+          # Exakt aus Produktidentitaet des Microsoft Partner Center (Store-ID 9NSW4QQ70KVT).
+          $manifestText = @'
+          <?xml version="1.0" encoding="utf-8"?>
+          <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+                   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+                   xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+                   xmlns:desktop7="http://schemas.microsoft.com/appx/manifest/desktop/windows10/7"
+                   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+                   IgnorableNamespaces="uap10 desktop7 rescap">
+            <Identity Name="SvenHerdes.KBM-Trainer" Publisher="CN=405FBBE9-20BB-4B46-AD61-D5629F6033B8"
+                      Version="1.4.6.0" ProcessorArchitecture="x64" />
+            <Properties>
+              <DisplayName>KBM-Trainer</DisplayName>
+              <PublisherDisplayName>Sven Herdes</PublisherDisplayName>
+              <Description>Kostenloses Lernprogramm fuer das kaufmaennische Bueromanagement</Description>
+              <Logo>Images\StoreLogo.png</Logo>
+            </Properties>
+            <Resources><Resource Language="de-DE" /></Resources>
+            <Dependencies>
+              <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.22621.0" />
+            </Dependencies>
+            <Applications>
+              <Application Id="KBMTrainer" Executable="KBM-Trainer.exe"
+                           uap10:RuntimeBehavior="packagedClassicApp" uap10:TrustLevel="mediumIL">
+                <uap:VisualElements DisplayName="KBM-Trainer" Description="Kaufmaennischer Lerntrainer"
+                                    BackgroundColor="transparent" Square150x150Logo="Images\Square150x150Logo.png"
+                                    Square44x44Logo="Images\Square44x44Logo.png" />
+                <Extensions>
+                  <desktop7:Extension Category="windows.shortcut">
+                    <desktop7:Shortcut File="$(Desktop)\KBM-Trainer.lnk" Icon="$(Package)\KBM-Trainer.exe"
+                                       Description="KBM-Trainer – Microsoft Store" />
+                  </desktop7:Extension>
+                </Extensions>
+              </Application>
+            </Applications>
+            <Capabilities><rescap:Capability Name="runFullTrust" /></Capabilities>
+          </Package>
+          '@
+          $manifestPath = Join-Path $stage 'AppxManifest.xml'
+          [System.IO.File]::WriteAllText($manifestPath, $manifestText, [System.Text.UTF8Encoding]::new($false))
+          [xml]$checkManifest = Get-Content -Path $manifestPath -Raw
+          if ($checkManifest.Package.Identity.Name -ne 'SvenHerdes.KBM-Trainer') { throw 'Falsche Paketidentitaet' }
+          if ($checkManifest.Package.Identity.Version -ne '1.4.6.0') { throw 'Falsche Store-Paketversion' }
+          if (-not (Test-Path (Join-Path $stage 'KBM-Store-Update.exe'))) { throw 'Store-Helfer im Paket fehlt' }
+          if ($manifestText -notmatch 'desktop7:Shortcut File=') { throw 'Installations-Desktop-Symbol fehlt im Manifest' }
+
+          $sdkPath = Join-Path ${env:ProgramFiles(x86)} 'Windows Kits\10\bin'
+          $makeappx = Get-ChildItem $sdkPath -Directory | Sort-Object Name -Descending | ForEach-Object {
+            $candidate = Join-Path $_.FullName 'x64\makeappx.exe'
+            if (Test-Path $candidate) { $candidate }
+          } | Select-Object -First 1
+          if (-not $makeappx) { throw 'Windows SDK makeappx.exe nicht gefunden' }
+
+          $output = Join-Path (Resolve-Path 'msix-output').Path 'KBM-Trainer-1.4.6-x64-UNSIGNIERT-TEST.msix'
+          & $makeappx pack /o /v /d $stage /p $output
+          if ($LASTEXITCODE -ne 0) { throw 'MSIX-Verpackung fehlgeschlagen' }
+          if (-not (Test-Path $output)) { throw 'MSIX-Datei fehlt' }
+          $hash = (Get-FileHash -Algorithm SHA256 $output).Hash
+          "MSIX-Testbuild erfolgreich: $output" | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          "SHA-256: $hash" | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          'ACHTUNG: Nicht signiert, nicht Store-zertifiziert, NICHT fuer Endbenutzer installieren.' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+          'Die Store-Ausgabe besitzt einen separaten Einstiegspunkt mit deaktiviertem GitHub-Updater. Vor Store-Freigabe ist ein realer Funktionstest erforderlich.' | Add-Content -Path $env:GITHUB_STEP_SUMMARY
+
+      - name: MSIX nur als Test-Artefakt speichern (kein Release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBM-Trainer-1.4.6-MSIX-UNSIGNIERT-NUR-TEST
+          path: msix-output/KBM-Trainer-1.4.6-x64-UNSIGNIERT-TEST.msix
+          if-no-files-found: error
+          retention-days: 7

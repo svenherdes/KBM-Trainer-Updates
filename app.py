@@ -1154,7 +1154,7 @@ class KBMApp(tk.Tk):
             tk.Label(line, text="Aktuell gibt es noch keine eindeutige Lernempfehlung. Nach einigen bearbeiteten Aufgaben wird hier automatisch ein passendes Thema vorgeschlagen.", font=("Segoe UI", 9), bg=CARD, fg=MUTED, wraplength=760, justify="left").pack(side="left")
             ttk.Button(line, text="Training öffnen", command=self.show_training_setup).pack(side="right", padx=(12, 0))
 
-        self._stage_progress_card(content)
+        self._stage_progress_card(content, has_learning_data=stats["total"] > 0)
 
         privacy = tk.Frame(content, bg=SOFT_BLUE, highlightthickness=1, highlightbackground=SOFT_BLUE_BORDER)
         privacy.pack(fill="x", padx=38, pady=(0, 20))
@@ -1217,8 +1217,8 @@ class KBMApp(tk.Tk):
             mode="training",
         )
 
-    def _stage_progress_card(self, parent):
-        """Always show progress toward the next two difficulty stages."""
+    def _stage_progress_card(self, parent, *, has_learning_data: bool = True):
+        """Show the selected profile\u0027s stage progress once learning data exists."""
         outer = tk.Frame(parent, bg=CARD, highlightthickness=1, highlightbackground=BORDER)
         outer.pack(fill="x", padx=38, pady=(0, 18))
 
@@ -1229,6 +1229,24 @@ class KBMApp(tk.Tk):
             bg=CARD,
             fg=TEXT,
         ).pack(anchor="w", padx=18, pady=(14, 2))
+
+        # Bei einem neuen Profil noch keine scheinbaren Fortschrittswerte zeigen.
+        if not has_learning_data:
+            tk.Label(
+                outer,
+                text=(
+                    "Für dieses Profil liegen noch keine Lerndaten vor. "
+                    "Starte ein Training und beantworte deine ersten Aufgaben. "
+                    "Danach erscheint hier dein persönlicher Stufenfortschritt."
+                ),
+                font=("Segoe UI", 10),
+                bg=CARD,
+                fg=MUTED,
+                wraplength=860,
+                justify="left",
+            ).pack(anchor="w", padx=18, pady=(8, 18))
+            return outer
+
         tk.Label(
             outer,
             text="So siehst du jederzeit, was dir für die Empfehlung zur nächsten Stufe noch fehlt.",
