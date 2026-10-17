@@ -61,11 +61,25 @@ if ($null -eq $pkg) { exit 2 }
 $desktop = [Environment]::GetFolderPath('Desktop')
 if (-not $desktop) { exit 3 }
 $path = Join-Path $desktop 'KBM-Trainer.lnk'
-if (Test-Path -LiteralPath $path) { exit 0 }
+$icon = Join-Path $pkg.InstallLocation 'KBM-Trainer.exe'
+if (-not (Test-Path -LiteralPath $icon)) { exit 4 }
 $ws = New-Object -ComObject WScript.Shell
+if (Test-Path -LiteralPath $path) {
+    # Nur die eigene alte Store-Verknuepfung reparieren; keine fremden Links ersetzen.
+    $existing = $ws.CreateShortcut($path)
+    $expectedArguments = "shell:AppsFolder\$($pkg.PackageFamilyName)!KBMTrainer"
+    $expectedTarget = Join-Path $env:WINDIR 'explorer.exe'
+    if (($existing.TargetPath -ieq $expectedTarget) -and
+        ($existing.Arguments -eq $expectedArguments)) {
+        $existing.IconLocation = "$icon,0"
+        $existing.Save()
+    }
+    exit 0
+}
 $link = $ws.CreateShortcut($path)
 $link.TargetPath = Join-Path $env:WINDIR 'explorer.exe'
 $link.Arguments = "shell:AppsFolder\$($pkg.PackageFamilyName)!KBMTrainer"
+$link.IconLocation = "$icon,0"
 $link.Description = 'KBM-Trainer aus dem Microsoft Store'
 $link.Save()
 '''
